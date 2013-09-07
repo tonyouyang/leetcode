@@ -31,6 +31,41 @@ public:
     }
 };
 
+// suggest solution
+class Solution {
+public:
+
+    vector<int> getElements(int x)
+    {
+        vector<int> ret;
+        while (x > 0) 
+        {
+            ret.push_back(x % 10);
+            x /= 10;
+        }
+        return ret;
+    }
+    
+    bool isPalind(const vector<int>& vs)
+    {
+        int i = 0, j = (int) vs.size() - 1;
+        while (i < j)
+        {
+            if (vs[i] != vs[j]) return false;
+            i++; j--;
+        }
+        return true;
+    }
+    
+    bool isPalindrome(int x) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (x < 0) return false; 
+        else return isPalind(getElements(x));
+    }
+};
+
+
 int main(int argc, char const *argv[])
 {
     int x = 0;
