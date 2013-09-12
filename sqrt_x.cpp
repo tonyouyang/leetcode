@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include <algorithm>
+#include <limits>
+#include <cmath>
 using namespace std;
 
 class Solution
@@ -13,18 +15,18 @@ public:
     {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
-        for (double start = 0, end = (double)x; ; )
+        for (int start = 0, end = min(x, (int)std::sqrt(numeric_limits<int>::max())); ; )
         {
-            double mid = start + (end - start) / 2, residule = mid * mid - x;
+            int mid = start + (end - start) / 2, square = mid * mid;
 
-            if (residule > 1e-8)
-                end = mid;
-            else if (residule < -1e-8)
-                start = mid;
+            if (square > x)
+                end = mid - 1;
+            else if (square < x)
+                start = mid + 1;
             else
-            	return (int)(mid + 1e-8); // important to add 1e-8, e.g x = 1
+            	return mid;
 
-            if (start > end - 1e-8) return (int)(mid + 1e-8);
+            if (start > end) return end + (start - end) / 2;
         }
     }
 };
