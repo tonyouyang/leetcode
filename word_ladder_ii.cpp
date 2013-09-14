@@ -31,11 +31,12 @@ using namespace std;
 class Solution
 {
 public:
+    vector<vector<string> > ladders;
+    unordered_map<string, vector<string> > prev_words;
+
     void buildLadders(
         const string end,
-        unordered_map<string, vector<string> > prev_words,
-        vector<string>  &ladder,
-        vector<vector<string> > &ladders)
+        vector<string> &ladder)
     {
         ladder.push_back(end);
         if (prev_words[end].empty())
@@ -48,7 +49,7 @@ public:
         {
             for (string prev_word : prev_words[end])
             {
-                buildLadders(prev_word, prev_words, ladder, ladders);
+                buildLadders(prev_word, ladder);
             }
         }
         ladder.pop_back();
@@ -58,10 +59,12 @@ public:
     {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
+        ladders.clear();
+        prev_words.clear();
+
         int word_len = start.length();
         int curr = 0, next = 1; // index fo transforming words & to-tranform words
         vector<unordered_set<string> > words(2);
-        unordered_map<string, vector<string> > prev_words; // prev words in ladders
 
         dict.insert(end);
         for (string word : dict) prev_words[word] = vector<string> ();
@@ -104,9 +107,8 @@ public:
         //     cout << endl;
         // }
 
-        vector<vector<string> > ladders;
         vector<string> ladder;
-        if (!prev_words[end].empty()) buildLadders(end, prev_words, ladder, ladders);
+        if (!prev_words[end].empty()) buildLadders(end, ladder);
 
         return ladders;
     }
