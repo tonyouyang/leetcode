@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
 #include <queue>
 #include <vector>
 using namespace std;
@@ -29,73 +30,86 @@ using namespace std;
 class Solution
 {
 public:
-    vector<vector<string>> findLadders(string start, string end, unordered_set<string> &dict)
+    vector<vector<string>> buildLadders(const string start, const string end, unordered_map<string, vector<string> > prev_words)
     {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<vector<string> > ladders;
-        int word_len = start.length(), dict_size = dict.size();
-        queue<vector<string> > to_transform;
-        unordered_set<string> transformed;
-        vector<string> current_step_transformed;
 
-        to_transform.push(vector<string> (1, start));
-        int current_step_wordcount = 1, next_step_wordcount = 0, step = 0;
-
-        while (!to_transform.empty())
+        if (end == start)
         {
-            vector<string> transform = to_transform.front();
-            string word = transform.back();
-            to_transform.pop();
-
-            for (int i = 0; i < word_len; ++i)
+            ladders.push_back(vector<string> (1, end));
+        }
+        else
+        {
+            for (string word : prev_words[end])
             {
-                for (int j = 0; j < 26; ++j)
+                vector<vector<string> > prev_ladders = buildLadders(start, word, prev_words);
+
+                for (vector<string> ladder : prev_ladders)
                 {
-                    string candidate_word = word;
-                    candidate_word[i] = 'a' + j;
-
-                    if (candidate_word == end)
-                    {
-                        vector<string> ladder(transform);
-                        ladder.push_back(end);
-                        ladders.push_back(ladder);
-                    }
-
-                    if (dict.find(candidate_word) != dict.end() && transformed.find(candidate_word) == transformed.end())
-                    {
-                        current_step_transformed.push_back(candidate_word);
-
-                        vector<string> appended_transform(transform);
-                        appended_transform.push_back(candidate_word);
-                        to_transform.push(appended_transform);
-
-                        next_step_wordcount++;
-                    }
+                    ladder.push_back(end);
+                    ladders.push_back(ladder);
                 }
-            }
-
-            if (--current_step_wordcount == 0)
-            {
-                if (!ladders.empty()) break;
-
-                transformed.insert(current_step_transformed.begin(), current_step_transformed.end());
-                current_step_transformed.clear();
-
-                current_step_wordcount = next_step_wordcount;
-                next_step_wordcount = 0;
-                step++;
             }
         }
 
         return ladders;
+    }
+
+    vector<vector<string>> findLadders(string start, string end, unordered_set<string> &dict)
+    {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int word_len = start.length();
+        int curr = 0, next = 1; // index fo transforming words & to-tranform words
+        vector<unordered_set<string> > words(2);
+        unordered_map<string, vector<string> > prev_words; // prev words in ladders
+
+        dict.insert(end);
+        for (string word : dict) prev_words[word] = vector<string> ();
+        words[curr].insert(start);
+
+        for ( ; !words[curr].empty() && words[curr].find(end) == words[curr].end(); curr = !curr, next = !next)
+        {
+            // cout << "curr = "; for (string word : words[curr]) cout << word << " "; cout << endl;
+            for (string word : words[curr]) dict.erase(word);
+            // cout << "dict = "; for (string word : dict) cout << word << " "; cout << endl;
+            words[next].clear();
+
+            for (string word : words[curr])
+            {
+                for (int i = 0; i < word_len; ++i)
+                {
+                    for (int j = 0; j < 26; ++j)
+                    {
+                        string candidate_word = word;
+                        candidate_word[i] = 'a' + j;
+
+                        if (dict.find(candidate_word) != dict.end())
+                        {
+                            words[next].insert(candidate_word);
+                            prev_words[candidate_word].push_back(word);
+                        }
+                    }
+                }
+            }
+            // cout << "next = "; for (string word : words[next]) cout << word << " "; cout << endl;
+        }
+
+        // for (unordered_map<string, vector<string> >::iterator itr = prev_words.begin(); itr != prev_words.end(); ++itr)
+        // {
+        //     cout << itr->first << " <-";
+        //     for (string word : itr->second) cout << word << " ";
+        //     cout << endl;
+        // }
+
+        return buildLadders(start, end, prev_words);
     }
 };
 
 int main(int argc, char const *argv[])
 {
     Solution solution;
-    unordered_set<string> dict0, dict1;
+    unordered_set<string> dict0, dict1, dict2;
     string dict_strings0[] = {"hot", "dot", "dog", "lot", "log"};
     string dict_strings1[] = {"ted", "tex", "red", "tax", "tad", "den", "rex", "pee"};
 
@@ -104,7 +118,8 @@ int main(int argc, char const *argv[])
 
     vector<vector<string> > ladders0 = solution.findLadders("hit", "cog", dict0);
     vector<vector<string> > ladders1 = solution.findLadders("red", "tax", dict1);
-    
+    vector<vector<string> > ladders2 = solution.findLadders("red", "tax", dict2);
+
     for (int i = 0, p = ladders0.size(); i < p; ++i)
     {
         for (int j = 0, q = ladders0[i].size(); j < q; ++j) cout << ladders0[i][j] <<  " ";
@@ -115,6 +130,7 @@ int main(int argc, char const *argv[])
         for (int j = 0, q = ladders1[i].size(); j < q; ++j) cout << ladders1[i][j] <<  " ";
         cout << endl;
     }
+    cout << ladders2.size() << endl;
 
     return 0;
 }
