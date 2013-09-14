@@ -25,34 +25,33 @@
 #include <unordered_map>
 #include <queue>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 class Solution
 {
 public:
-    vector<vector<string>> buildLadders(const string start, const string end, unordered_map<string, vector<string> > prev_words)
+    void buildLadders(
+        const string end,
+        unordered_map<string, vector<string> > prev_words,
+        vector<string>  &ladder,
+        vector<vector<string> > &ladders)
     {
-        vector<vector<string> > ladders;
-
-        if (end == start)
+        ladder.push_back(end);
+        if (prev_words[end].empty())
         {
-            ladders.push_back(vector<string> (1, end));
+            vector<string> l(ladder);
+            reverse(l.begin(), l.end());
+            ladders.push_back(l);
         }
         else
         {
-            for (string word : prev_words[end])
+            for (string prev_word : prev_words[end])
             {
-                vector<vector<string> > prev_ladders = buildLadders(start, word, prev_words);
-
-                for (vector<string> ladder : prev_ladders)
-                {
-                    ladder.push_back(end);
-                    ladders.push_back(ladder);
-                }
+                buildLadders(prev_word, prev_words, ladder, ladders);
             }
         }
-
-        return ladders;
+        ladder.pop_back();
     }
 
     vector<vector<string>> findLadders(string start, string end, unordered_set<string> &dict)
@@ -81,13 +80,16 @@ public:
                 {
                     for (int j = 0; j < 26; ++j)
                     {
-                        string candidate_word = word;
-                        candidate_word[i] = 'a' + j;
-
-                        if (dict.find(candidate_word) != dict.end())
+                        if (word[i] != 'a' + j)
                         {
-                            words[next].insert(candidate_word);
-                            prev_words[candidate_word].push_back(word);
+                            string candidate_word = word;
+                            candidate_word[i] = 'a' + j;
+
+                            if (dict.find(candidate_word) != dict.end())
+                            {
+                                words[next].insert(candidate_word);
+                                prev_words[candidate_word].push_back(word);
+                            }
                         }
                     }
                 }
@@ -102,7 +104,11 @@ public:
         //     cout << endl;
         // }
 
-        return buildLadders(start, end, prev_words);
+        vector<vector<string> > ladders;
+        vector<string> ladder;
+        if (!prev_words[end].empty()) buildLadders(end, prev_words, ladder, ladders);
+
+        return ladders;
     }
 };
 
