@@ -13,6 +13,23 @@ using namespace std;
 class Solution
 {
 public:
+	// slower version
+    // int maxProfit(vector<int> &prices)
+    // {
+    //     if (prices.empty()) return 0;
+
+    //     int profit = 0;
+
+    //     for (int i = 1, len = prices.size(); i < len; ++i)
+    //     {
+    //         int delta = prices[i] - prices[i - 1];
+
+    //         if (delta > 0) profit += delta;
+    //     }
+
+    //     return profit;
+    // }
+
     int maxProfit(vector<int> &prices)
     {
         // Start typing your C/C++ solution below
