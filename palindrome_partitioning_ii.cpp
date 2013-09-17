@@ -10,6 +10,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <cstring>
 using namespace std;
 
 class Solution
@@ -22,20 +23,21 @@ public:
         int len = s.length();
         if (len == 0) return 0;
 
-        vector<set<int> > p(len, set<int> ()); // {j} st. s_i ~ s_j is palindrom
-        vector<int> c(len + 1, 0); // #partition before s_i
+        bool p[len][len]; // whether s_i ~ s_j is palindrom
+        int c[len + 1]; // min #partition of s_i ~ end
+        memset(p, false, sizeof(p));
+        memset(c, 0, sizeof(c));
 
-        for (int d = 0; d < len; ++d)
-            for (int i = 0; i + d < len; ++i)
-                if (s[i] == s[i + d])
-                    if (d <= 1 || p[i + 1].find(i + d - 1) != p[i + 1].end())
-                        p[i].insert(i + d);
+        // tips : calc c[] from larger index, so it can be calc simultaneously with p[]
+        for (int i = len - 1; i >= 0; --i)
+            for (int j = i; j < len; ++j)
+                if (s[i] == s[j] && (j - i < 2 || p[i + 1][j - 1]))
+                {
+                	p[i][j] = true;
+                	c[i] = c[i] == 0 ? c[j + 1] + 1 : min(c[i], c[j + 1] + 1);
+                }
 
-        for (int i = 0; i < len; ++i)
-            for (int j : p[i])
-                c[j + 1] = c[j + 1] == 0 ? c[i] + 1 : min(c[j + 1], c[i] + 1);
-
-        return c[len] - 1;
+        return c[0] - 1;
     }
 };
 
