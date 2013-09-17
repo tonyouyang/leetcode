@@ -56,3 +56,4 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+// fastest solution: the i-th code is (i >> 1)^i
