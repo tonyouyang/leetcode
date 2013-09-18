@@ -23,43 +23,43 @@ public:
     vector<vector<int> > threeSum(vector<int> &num) {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
+        vector<vector<int> > tuples;
+        int len = num.size();
+        if (len < 3) return tuples;
         
-        // sort
         sort(num.begin(), num.end());
-
-    	// find tuples
-    	set<vector<int> > tuples;
-
-    	for (int i = 0, len = num.size(); i < len - 2; ++i)
-    	{
-    		int j = i + 1;
-    		int k = len - 1;
-
-    		while (j < k)
-    		{
-    			int sum2 = num[i] + num[j];
-    			if (sum2 + num[k] > 0)
-    			{
-    				k--;
-    			}
-    			else if (sum2 + num[k] < 0)
-    			{
-    				j++;
-    			}
-    			else
-    			{
-    				vector<int> t(3);
-    				t[0] = num[i];
-    				t[1] = num[j];
-    				t[2] = num[k];
-    				tuples.insert(t);
-    				j++;
-    				k--;
-    			}
-    		}
-    	}
-
-    	return vector<vector<int> >(tuples.begin(), tuples.end());
+        for (int i = 0; i < len - 2; ++i)
+        {
+            int sum = -num[i];
+            int j = i + 1, k = len - 1;
+            
+            while (j < k)
+            {
+                if (num[j] + num[k] > sum)
+                {
+                    k--;
+                }
+                else if (num[j] + num[k] < sum)
+                {
+                    j++;
+                }
+                else
+                {
+                    vector<int> tuple;
+                    tuple.push_back(num[i]);
+                    tuple.push_back(num[j]);
+                    tuple.push_back(num[k]);
+                    tuples.push_back(tuple);
+                    j++;
+                    k--;
+                    while (num[j - 1] == num[j] && j < k) j++;
+                    while (num[k] == num[k + 1] && j < k) k++;
+                }
+            }
+            while (i + 1 < len - 2 && num[i] == num[i + 1]) i++;
+        }
+        
+        return tuples;
     }
 };
 
