@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <vector>
+#include <map>
 using namespace std;
 
 class Solution
@@ -20,20 +21,32 @@ public:
     {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
-        vector<int> r(2);
+        vector<int> ret;
+        int len = numbers.size();
+        if (len <= 1) return ret;
 
-        for (int i = 0, len = numbers.size(); i < len - 1; ++i)
+        map<int, int> complement;
+
+        for (int i = 0; i < len; ++i)
         {
-            for (int j = i + 1; j < len; ++j)
+            if (complement.find(numbers[i]) != complement.end())
             {
-                if (numbers[i] + numbers[j] == target)
+                int j = complement[numbers[i]];
+
+                if (j < i)
                 {
-                    r[0] = i + 1;
-                    r[1] = j + 1;
-                    return r;
+                    ret.push_back(j + 1);
+                    ret.push_back(i + 1);
+                    return ret;
                 }
             }
+            else
+            {
+                complement[target - numbers[i]] = i;
+            }
         }
+
+        return ret;
     }
 };
 
