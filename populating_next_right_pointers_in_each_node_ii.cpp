@@ -8,6 +8,7 @@ struct TreeLinkNode
     TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
 };
 
+
 class Solution
 {
 public:
@@ -41,19 +42,6 @@ public:
         return NULL;
     }
 
-    void connect(TreeLinkNode *l, TreeLinkNode *r)
-    {
-        if (l == NULL || r == NULL) return;
-
-        connect(getLeftMostChild(l), getLeftMostChild(r));
-        if (l != NULL)
-        {
-            while (l->next != NULL) l = l->next;
-        }
-
-        l->next = r;
-    }
-
     void connect(TreeLinkNode *root)
     {
         // Start typing your C/C++ solution below
@@ -62,7 +50,14 @@ public:
 
         connect(root->left);
         connect(root->right);
-        connect(root->left, root->right);
+        for (TreeLinkNode *l = root->left, *r = root->right; l != NULL && r != NULL; )
+        {
+            TreeLinkNode *lcopy = l, *rcopy = r;
+            l = getLeftMostChild(l);
+            r = getLeftMostChild(r);
+            if (lcopy != NULL) while (lcopy->next != NULL) lcopy = lcopy->next;
+            lcopy->next = rcopy;
+        }
     }
 };
 
