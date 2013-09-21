@@ -23,7 +23,9 @@ public:
             {
                 if (k->next->val == i->next->val)
                 {
+                    ListNode *t = k->next;
                     k->next = k->next->next;
+                    delete t;
                     count++;
                 }
                 else
@@ -34,7 +36,9 @@ public:
             if (count > 0)
             {
                 if (i->next == ret) ret = i->next->next;
+                ListNode *t = i->next;
                 i->next = i->next->next;
+                delete t;
             }
             else
             {
