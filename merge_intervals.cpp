@@ -11,7 +11,7 @@ class Solution {
 public:
     static bool compare(const Interval &i, const Interval &j)
     {
-        return i.start < j.start; // || i.start == j.start && i.end <= j.end;
+        return i.start < j.start;
     }
     
     vector<Interval> merge(vector<Interval> &intervals) {
@@ -26,7 +26,6 @@ public:
         {
             if (intervals[i].start <= r)
             {
-                // l = min(l, intervals[i].start);
                 r = max(r, intervals[i].end);
             }
             else
