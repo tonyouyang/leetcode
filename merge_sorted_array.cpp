@@ -3,13 +3,10 @@ public:
     void merge(int A[], int m, int B[], int n) {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
-        int i, j, k;
-        
-        for (i = m - 1, j = n - 1, k = m + n - 1; i >= 0 && j >= 0; )
+        while (n > 0)
         {
-            if (A[i] < B[j]) A[k--] = B[j--];
-            else A[k--] = A[i--];
+            if (m == 0 || A[m - 1] < B[n - 1]) A[m + n - 1] = B[--n];
+            else A[m + n - 1] = A[--m];
         }
-        while (j >= 0) A[k--] = B[j--];
     }
 };
