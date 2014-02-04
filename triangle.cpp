@@ -66,6 +66,27 @@ public:
     }
 };
 
+// my solution 
+class Solution {
+public:
+    int minimumTotal(vector<vector<int> > &triangle) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        
+        for (int i = 1; i < triangle.size(); ++i)
+            for (int j = 0; j < triangle[i].size(); ++j) 
+            {
+                int curBest = numeric_limits<int>::max();
+                if (j > 0) curBest = min(curBest, triangle[i - 1][j - 1]);
+                if (j < i) curBest = min(curBest, triangle[i - 1][j]);
+                triangle[i][j] += curBest;
+            }
+            
+        const vector<int>& v = triangle.back();
+        return *min_element(v.begin(), v.end());
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     Solution solution;
